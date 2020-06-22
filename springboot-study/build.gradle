@@ -1,0 +1,105 @@
+
+// 기존 그레이들로만 프로젝트를 만들었을 때(초기)
+//plugins {
+//    id 'java'
+//}
+//
+//group 'com.fulfill'
+//version '1.0-SNAPSHOT'
+//
+//sourceCompatibility = 1.8
+//
+//repositories {
+//    mavenCentral()
+//}
+//
+//dependencies {
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+//}
+
+
+// msir 프로젝트의 build.gradle(아래 교재의 build.gradle와 비교하기 위해 가져옴)
+// plugins부터 생성방식에 차이가 있음
+//plugins {
+//    id 'org.springframework.boot' version '2.3.0.RELEASE'
+//    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+//    id 'java'
+//}
+//
+//group = 'com.daumsoft'
+//version = '0.0.1-SNAPSHOT'
+//sourceCompatibility = '1.8'
+//
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//}
+//
+//repositories {
+//    mavenCentral()
+//}
+//
+//dependencies {
+//    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+//    implementation 'org.springframework.boot:spring-boot-starter-web'
+//    compileOnly 'org.projectlombok:lombok'
+//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//    annotationProcessor 'org.projectlombok:lombok'
+//    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+//        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+//    }
+////    implementation('org.springframework.boot:spring-boot-starter-data-solr')
+//    // https://mvnrepository.com/artifact/org.apache.solr/solr-solrj
+//    compile group: 'org.apache.solr', name: 'solr-solrj', version: '5.3.1'
+//
+//}
+//
+//test {
+//    useJUnitPlatform()
+//}
+
+// 이 프로젝트의 플러그인 의존성 관리를 위한 설정(인텔리제이의 플러그인 관리가 아님)
+buildscript {
+    // ext라는 키워드는 build.gradle에서 사용하는 전역변수를 설정하겠다는 의미
+    // 여기서는 springBootVersion 전역변수를 생성하고 그 값을 '2.1.7.RELEASE'로 하겠다는 의미
+    ext {
+        springBootVersion = '2.1.7.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    // spring-boot-gradle-plugin라는 스프링 부트 그레이들 플러그인의 2.1.7.RELEASE를 의존성으로 받겠다는 의미
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'     // io.spring.dependency-management 플러그인은 스프링 부트의 의존성들을 관리해 주는 플러그인이라 꼭 추가해야만 함
+// 위 4개의 플러그인은 자바와 스프링 부트를 사용하기 위해서는 필수 플러그인들이니 항상 추가하면 됩니다.(교재에는 4개다 필수이지만 msir프로젝트에는 eclipse가 없어서 필수인지는 잘 모르겠음)
+
+
+group 'com.fulfill'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+
+// repositories는 각종 의존성(라이브러리)들을 어떤 원격 저장소에서 받을지를 정합니다.
+// 기본적으로 mavenCentral을 많이 사용하지만, 최근에는 라이브러리 업로드 난이도 때문에 jcenter도 많이 사용합니다.
+repositories {
+    mavenCentral()
+    jcenter()
+}
+// dependencies는 프로젝트 개발에 필요한 의존성들을 선언하는 곳입니다.
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    // 아래처럼 특정 버전을 명시할 수 있다.
+    // 하지만 버전을 명시하지 않아야만 맨 위에 작성한 'org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}'의 버전을 따라가게 됩니다.
+    //testCompile('org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE')
+}
